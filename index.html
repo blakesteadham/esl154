@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>TExES ESL Supplemental (154) — Study App</title>
+<meta name="theme-color" content="#2E4640">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ESL 154">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --board:#2E4640;
+  --board-deep:#263B35;
+  --board-line:rgba(242,239,228,.14);
+  --chalk:#F2EFE4;
+  --chalk-dim:rgba(242,239,228,.66);
+  --card:#FDFBF3;
+  --rule-blue:#BFD0E4;
+  --rule-red:#D6604D;
+  --ink:#26323B;
+  --ink-soft:#5B6B77;
+  --accent:#3E6FB0;
+  --accent-deep:#31598F;
+  --correct:#3E7C4F;
+  --correct-bg:#EAF3EC;
+  --wrong:#C24A3F;
+  --wrong-bg:#F9ECEA;
+  --shadow:0 10px 24px rgba(18,30,27,.35);
+  --radius:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:'Inter',system-ui,sans-serif;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 46px, var(--board-line) 46px 47px),
+    radial-gradient(1200px 600px at 50% -10%, #37544D 0%, var(--board) 55%, var(--board-deep) 100%);
+  color:var(--ink);
+  min-height:100vh;
+  padding-bottom:calc(60px + env(safe-area-inset-bottom));
+  padding-top:env(safe-area-inset-top);
+}
+.wrap{max-width:860px;margin:0 auto;padding:0 18px}
+
+/* ---------- header ---------- */
+header{padding:34px 0 10px;text-align:center;color:var(--chalk)}
+.eyebrow{
+  font-family:'Inter',sans-serif;font-size:.72rem;font-weight:600;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--chalk-dim);margin-bottom:10px;
+}
+h1{
+  font-family:'Zilla Slab',serif;font-weight:700;font-size:clamp(1.7rem,4.5vw,2.5rem);
+  line-height:1.15;
+}
+h1 .exam-code{color:#F0C987}
+.underline{
+  width:120px;height:3px;margin:14px auto 0;border-radius:3px;
+  background:linear-gradient(90deg,transparent,var(--chalk-dim),transparent);
+}
+header p.sub{margin-top:12px;color:var(--chalk-dim);font-size:.92rem}
+
+/* ---------- tabs ---------- */
+nav{display:flex;justify-content:center;gap:8px;margin:26px 0 24px;flex-wrap:wrap}
+.tab{
+  font-family:'Zilla Slab',serif;font-weight:600;font-size:1rem;
+  background:transparent;color:var(--chalk-dim);
+  border:1.5px solid var(--board-line);border-radius:999px;
+  padding:9px 22px;cursor:pointer;transition:all .18s ease;
+}
+.tab:hover{color:var(--chalk);border-color:var(--chalk-dim)}
+.tab.active{background:var(--chalk);color:var(--board-deep);border-color:var(--chalk)}
+.tab:focus-visible,button:focus-visible{outline:3px solid #F0C987;outline-offset:2px}
+
+.panel{display:none}
+.panel.active{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+
+/* ---------- shared card sheet ---------- */
+.sheet{
+  background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);
+  padding:26px 28px;
+}
+
+/* ---------- overview ---------- */
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:18px 0 26px}
+.fact{
+  background:#F4F0E4;border:1px solid #E4DECB;border-radius:8px;padding:14px 16px;text-align:center;
+}
+.fact .big{font-family:'Zilla Slab',serif;font-weight:700;font-size:1.5rem;color:var(--accent-deep)}
+.fact .lbl{font-size:.74rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);margin-top:4px}
+.domain{border-left:4px solid var(--accent);padding:4px 0 4px 16px;margin:20px 0}
+.domain h3{font-family:'Zilla Slab',serif;font-size:1.15rem;margin-bottom:4px}
+.domain .weight{font-size:.78rem;font-weight:700;color:var(--rule-red);letter-spacing:.06em}
+.domain p{font-size:.92rem;color:var(--ink-soft);line-height:1.55;margin-top:6px}
+.note{font-size:.82rem;color:var(--ink-soft);margin-top:22px;border-top:1px dashed #DDD5BF;padding-top:14px;line-height:1.5}
+.sheet h2{font-family:'Zilla Slab',serif;font-size:1.4rem;margin-bottom:6px}
+.sheet .lede{color:var(--ink-soft);font-size:.95rem;line-height:1.55}
+
+/* ---------- chips ---------- */
+.chips{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:18px}
+.chip{
+  font-size:.8rem;font-weight:600;padding:7px 14px;border-radius:999px;cursor:pointer;
+  border:1.5px solid var(--board-line);background:transparent;color:var(--chalk-dim);transition:all .15s;
+}
+.chip:hover{color:var(--chalk);border-color:var(--chalk-dim)}
+.chip.on{background:#F0C987;border-color:#F0C987;color:#3A2E13}
+
+/* ---------- flashcard (the index card) ---------- */
+.fc-stage{perspective:1400px;margin:0 auto;max-width:640px}
+.fc{
+  position:relative;width:100%;min-height:340px;cursor:pointer;
+  transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,.1,.2,1);
+  border:none;background:transparent;display:block;text-align:left;font:inherit;color:inherit;
+}
+.fc.flipped{transform:rotateX(180deg)}
+.face{
+  position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;
+  background:
+    linear-gradient(0deg, transparent 0 30px, var(--rule-blue) 30px 31px) 0 0/100% 31px repeat-y content-box,
+    var(--card);
+  padding:0;
+  display:flex;flex-direction:column;
+}
+.face .redline{position:absolute;top:52px;left:0;right:0;height:2px;background:var(--rule-red);opacity:.85}
+.face .tag{
+  position:relative;z-index:1;padding:16px 22px 10px;
+  font-size:.7rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--rule-red);
+}
+.face .body{
+  position:relative;z-index:1;flex:1;display:flex;align-items:center;justify-content:center;
+  padding:26px 34px 34px;text-align:center;
+}
+.face.front .body{font-family:'Zilla Slab',serif;font-weight:600;font-size:clamp(1.25rem,3vw,1.6rem);line-height:1.35}
+.face.back{transform:rotateX(180deg)}
+.face.back .body{font-size:1rem;line-height:1.75;color:var(--ink);text-align:left;align-items:flex-start;padding-top:20px}
+.face .hint{position:absolute;bottom:12px;right:18px;font-size:.72rem;color:var(--ink-soft);z-index:1}
+
+.fc-controls{display:flex;justify-content:center;gap:10px;margin-top:20px;flex-wrap:wrap}
+.btn{
+  font-family:'Inter',sans-serif;font-weight:600;font-size:.88rem;
+  border:none;border-radius:8px;padding:11px 20px;cursor:pointer;transition:transform .12s,background .15s;
+}
+.btn:active{transform:scale(.97)}
+.btn-solid{background:var(--accent);color:#fff}
+.btn-solid:hover{background:var(--accent-deep)}
+.btn-ghost{background:transparent;color:var(--chalk);border:1.5px solid var(--board-line)}
+.btn-ghost:hover{border-color:var(--chalk-dim)}
+.btn-good{background:var(--correct);color:#fff}
+.btn-bad{background:var(--rule-red);color:#fff}
+.fc-meta{text-align:center;color:var(--chalk-dim);font-size:.85rem;margin-top:14px}
+.fc-meta b{color:var(--chalk)}
+.kbd-hint{text-align:center;color:var(--chalk-dim);font-size:.74rem;margin-top:8px}
+.kbd-hint kbd{border:1px solid var(--board-line);border-radius:4px;padding:1px 6px;font-family:inherit}
+
+/* ---------- quiz ---------- */
+.q-count{font-size:.78rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--rule-red);margin-bottom:10px}
+.q-text{font-family:'Zilla Slab',serif;font-weight:600;font-size:1.2rem;line-height:1.45;margin-bottom:20px}
+.choices{display:flex;flex-direction:column;gap:10px}
+.choice{
+  text-align:left;font:inherit;font-size:.95rem;line-height:1.5;
+  background:#F7F4E9;border:1.5px solid #E4DECB;border-radius:8px;
+  padding:13px 16px;cursor:pointer;transition:border-color .15s,background .15s;color:var(--ink);
+  display:flex;gap:12px;align-items:flex-start;
+}
+.choice:hover:not(:disabled){border-color:var(--accent);background:#F1F3F5}
+.choice:disabled{cursor:default}
+.choice .letter{
+  font-family:'Zilla Slab',serif;font-weight:700;color:var(--accent-deep);flex:none;
+}
+.choice.correct{background:var(--correct-bg);border-color:var(--correct)}
+.choice.correct .letter{color:var(--correct)}
+.choice.wrong{background:var(--wrong-bg);border-color:var(--wrong)}
+.choice.wrong .letter{color:var(--wrong)}
+.explain{
+  margin-top:18px;background:#F4F0E4;border-left:4px solid var(--accent);
+  border-radius:0 8px 8px 0;padding:14px 18px;font-size:.92rem;line-height:1.6;
+}
+.explain b{font-family:'Zilla Slab',serif}
+.q-foot{display:flex;justify-content:space-between;align-items:center;margin-top:22px;flex-wrap:wrap;gap:10px}
+.score-pill{font-size:.85rem;font-weight:600;color:var(--ink-soft)}
+.progressbar{height:5px;background:#E8E2CE;border-radius:5px;overflow:hidden;margin-bottom:22px}
+.progressbar div{height:100%;background:var(--accent);border-radius:5px;transition:width .3s}
+
+/* results */
+.result-big{font-family:'Zilla Slab',serif;font-weight:700;font-size:2.6rem;text-align:center;color:var(--accent-deep)}
+.result-sub{text-align:center;color:var(--ink-soft);margin:6px 0 22px}
+.dbreak{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+.dbreak .row{display:flex;align-items:center;gap:12px;font-size:.88rem}
+.dbreak .row .name{flex:none;width:200px;font-weight:600}
+.dbreak .bar{flex:1;height:10px;background:#E8E2CE;border-radius:6px;overflow:hidden}
+.dbreak .bar div{height:100%;background:var(--correct);border-radius:6px}
+.dbreak .pct{flex:none;width:52px;text-align:right;font-weight:600}
+.center{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+
+.start-opts{display:flex;flex-direction:column;gap:10px;margin:20px 0}
+.start-opts .choice .letter{color:var(--rule-red)}
+
+@media (max-width:560px){
+  .sheet{padding:20px 18px}
+  .face .body{padding:20px 22px 30px}
+  .dbreak .row .name{width:120px;font-size:.78rem}
+}
+</style>
+</head>
+<body>
+
+<header class="wrap">
+  <div class="eyebrow">Texas Educator Certification · Study Companion</div>
+  <h1>TExES ESL Supplemental <span class="exam-code">(154)</span></h1>
+  <div class="underline"></div>
+  <p class="sub">Flashcards and practice questions across all three exam domains.</p>
+</header>
+
+<nav class="wrap" role="tablist">
+  <button class="tab active" data-panel="overview" role="tab">Exam overview</button>
+  <button class="tab" data-panel="cards" role="tab">Flashcards</button>
+  <button class="tab" data-panel="quiz" role="tab">Practice quiz</button>
+</nav>
+
+<main class="wrap">
+
+  <!-- ============ OVERVIEW ============ -->
+  <section id="overview" class="panel active">
+    <div class="sheet">
+      <h2>What's on the exam</h2>
+      <p class="lede">The ESL Supplemental (154) measures the knowledge required to teach English learners in Texas public schools. It's a computer-administered, selected-response exam.</p>
+
+      <div class="facts">
+        <div class="fact"><div class="big">80</div><div class="lbl">Selected-response questions</div></div>
+        <div class="fact"><div class="big">240</div><div class="lbl">Scaled passing score</div></div>
+        <div class="fact"><div class="big">4h 45m</div><div class="lbl">Total appointment time</div></div>
+        <div class="fact"><div class="big">3</div><div class="lbl">Domains · 9 competencies</div></div>
+      </div>
+
+      <div class="domain">
+        <h3>Domain I — Language Concepts &amp; Language Acquisition</h3>
+        <div class="weight">≈ 25% of exam · Competencies 001–002</div>
+        <p>Fundamental linguistics (phonology, morphology, syntax, semantics, pragmatics) and how first and second languages are acquired — Krashen, Cummins (BICS/CALP), stages of acquisition, interlanguage, transfer.</p>
+      </div>
+      <div class="domain">
+        <h3>Domain II — ESL Instruction &amp; Assessment</h3>
+        <div class="weight">≈ 45% of exam · Competencies 003–006</div>
+        <p>The heavyweight domain. ESL methods (sheltered instruction, TPR, communicative approaches), teaching listening/speaking/reading/writing, ELPS integration, content-area support, and assessment — including TELPAS and formative/summative/authentic assessment.</p>
+      </div>
+      <div class="domain">
+        <h3>Domain III — Foundations, Culture, Family &amp; Community</h3>
+        <div class="weight">≈ 30% of exam · Competencies 007–009</div>
+        <p>Landmark court cases (Lau, Castañeda, Plyler), federal and Texas law (Title VI, TEC Chapter 89), LPAC responsibilities, program models, multicultural awareness, and family/community engagement.</p>
+      </div>
+
+      <p class="note">Study tip: the exam loves classroom scenarios — most questions describe a student or situation and ask for the <em>best</em> teacher response. When two answers seem right, pick the one that keeps instruction comprehensible, additive (values the home language), and appropriate to the student's proficiency stage. Verify current exam logistics at tx.nesinc.com before test day.</p>
+    </div>
+  </section>
+
+  <!-- ============ FLASHCARDS ============ -->
+  <section id="cards" class="panel">
+    <div class="chips" id="cardChips">
+      <button class="chip on" data-f="all">All cards</button>
+      <button class="chip" data-f="1">Domain I</button>
+      <button class="chip" data-f="2">Domain II</button>
+      <button class="chip" data-f="3">Domain III</button>
+      <button class="chip" data-f="review">Needs review (<span id="revCount">0</span>)</button>
+    </div>
+
+    <div class="fc-stage">
+      <button class="fc" id="fcCard" aria-live="polite">
+        <div class="face front">
+          <div class="redline"></div>
+          <div class="tag" id="fcTagF"></div>
+          <div class="body" id="fcFront"></div>
+          <div class="hint">tap to flip</div>
+        </div>
+        <div class="face back">
+          <div class="redline"></div>
+          <div class="tag" id="fcTagB"></div>
+          <div class="body" id="fcBack"></div>
+          <div class="hint">tap to flip back</div>
+        </div>
+      </button>
+    </div>
+
+    <div class="fc-controls">
+      <button class="btn btn-ghost" id="prevBtn">← Back</button>
+      <button class="btn btn-bad" id="missBtn">Needs review</button>
+      <button class="btn btn-good" id="gotBtn">Got it</button>
+      <button class="btn btn-ghost" id="nextBtn">Next →</button>
+    </div>
+    <div class="fc-controls">
+      <button class="btn btn-ghost" id="shuffleBtn">Shuffle deck</button>
+    </div>
+    <div class="fc-meta">Card <b id="fcPos">1</b> of <b id="fcTotal">0</b></div>
+    <div class="kbd-hint"><kbd>Space</kbd> flip · <kbd>←</kbd><kbd>→</kbd> navigate</div>
+  </section>
+
+  <!-- ============ QUIZ ============ -->
+  <section id="quiz" class="panel">
+    <div class="sheet" id="quizBox"></div>
+  </section>
+
+</main>
+
+<script>
+/* =================== DATA =================== */
+const D = {1:"Domain I · Language & Acquisition", 2:"Domain II · Instruction & Assessment", 3:"Domain III · Foundations & Culture"};
+
+const CARDS = [
+// ---- Domain I ----
+[1,"Phonology","The sound system of a language. A <b>phoneme</b> is the smallest unit of sound that changes meaning — /b/ vs. /p/ turns <i>bat</i> into <i>pat</i>. ELs may struggle with English phonemes that don't exist in their L1."],
+[1,"Morphology","The study of how words are formed. A <b>morpheme</b> is the smallest unit of meaning: <i>un·happi·ness</i> has three. Teaching prefixes, suffixes, and roots builds EL vocabulary fast."],
+[1,"Syntax","The rules for arranging words into phrases and sentences (word order, sentence structure). Example of L1 influence: Spanish adjectives follow nouns, so a student may write \"the car red.\""],
+[1,"Semantics","The meaning of words, phrases, and sentences — including multiple-meaning words and idioms, which are especially challenging for ELs."],
+[1,"Pragmatics","How context and social situation shape meaning: politeness, turn-taking, register, indirect requests. \"Can you open the window?\" is a request, not a question about ability."],
+[1,"Register","The level of formality a speaker adjusts to fit the audience and setting — playground talk vs. presenting to the class. ELs need explicit instruction in shifting registers."],
+[1,"BICS (Cummins)","<b>Basic Interpersonal Communication Skills</b> — conversational, context-embedded, cognitively undemanding language. Typically develops in <b>1–3 years</b>. A student fluent on the playground may still lack academic language."],
+[1,"CALP (Cummins)","<b>Cognitive Academic Language Proficiency</b> — abstract, context-reduced academic language needed for school success. Takes roughly <b>5–7 years</b> to develop. This is why exited students still need monitoring and support."],
+[1,"Krashen: Acquisition vs. Learning","<b>Acquisition</b> is subconscious, through meaningful communication (how children get L1). <b>Learning</b> is conscious study of rules. Krashen argues acquisition, not learning, drives fluency."],
+[1,"Comprehensible input (i+1)","Language input slightly beyond the learner's current level (<b>i+1</b>), made understandable through context, visuals, and gestures. The engine of acquisition in Krashen's theory."],
+[1,"Affective filter","Anxiety, low motivation, or low self-confidence raise a mental \"filter\" that blocks input. Low-stress, welcoming classrooms <b>lower the filter</b> so acquisition can happen."],
+[1,"Monitor hypothesis","Consciously learned rules act only as an <b>editor</b> — useful when the learner has time, knows the rule, and is focused on form (like editing an essay), not during spontaneous speech."],
+[1,"Natural order hypothesis","Grammatical structures are acquired in a <b>predictable order</b> regardless of the order they're taught (e.g., -ing before third-person -s). Errors along the way are developmental, not failures."],
+[1,"Silent period","The <b>preproduction</b> stage: learners understand more than they produce and may say little or nothing. It's normal and healthy — don't force speech; allow gestures, pointing, and yes/no responses."],
+[1,"Stages of second language acquisition","<b>Preproduction → Early production → Speech emergence → Intermediate fluency → Advanced fluency.</b> Matching tasks to stage (e.g., TPR for preproduction, sentence stems for speech emergence) is a core exam skill."],
+[1,"Interlanguage","The learner's evolving, systematic version of the L2 — a moving blend of L1 rules, L2 rules, and the learner's own hypotheses. Errors reveal where the student is in that system."],
+[1,"Fossilization","When incorrect language forms become <b>permanent</b> despite continued exposure — often because communication succeeds without correction. Targeted feedback helps prevent it."],
+[1,"Language transfer","Applying L1 knowledge to L2. <b>Positive transfer</b>: cognates, shared alphabet. <b>Negative transfer</b> (interference): \"I have hunger\" from Spanish <i>tengo hambre</i>."],
+[1,"Cognates","Words similar in form and meaning across languages: <i>familia/family, información/information</i>. A powerful bridge for Spanish speakers — but watch for false cognates (<i>embarazada</i> ≠ embarrassed)."],
+[1,"Code-switching","Alternating between two languages within a conversation or sentence. A sign of <b>linguistic skill and bilingual identity</b>, not confusion or deficiency."],
+[1,"Overgeneralization","Applying a rule too broadly: \"goed,\" \"foots,\" \"mouses.\" A <b>normal developmental pattern</b> showing the learner is internalizing rules — respond with modeling, not penalty."],
+// ---- Domain II ----
+[2,"ELPS","<b>English Language Proficiency Standards</b> — required part of the Texas curriculum for ELs in <b>every subject, every grade</b>. All content teachers (not just ESL teachers) must integrate language instruction with content, using language objectives across listening, speaking, reading, and writing."],
+[2,"TELPAS","<b>Texas English Language Proficiency Assessment System</b> — assesses ELs annually, K–12, in listening, speaking, reading, and writing. Proficiency ratings: <b>Beginning, Intermediate, Advanced, Advanced High</b>."],
+[2,"Sheltered instruction (SIOP)","Teaching grade-level <b>content</b> in ways ELs can understand: visuals, modeling, adapted texts, building background, and posting both <b>content and language objectives</b>. Language and content develop together."],
+[2,"Scaffolding","Temporary supports — sentence stems, word banks, graphic organizers, modeling, partner talk — that are <b>gradually removed</b> as proficiency grows. Support the student's reach, then step back."],
+[2,"Total Physical Response (TPR)","Students respond to commands with <b>physical movement</b> (\"Stand up,\" \"Point to the door\"). Ideal for newcomers and the silent period: builds comprehension without forcing speech."],
+[2,"Language Experience Approach","Students share an experience, <b>dictate</b> it while the teacher writes it down, then use that text for reading instruction. Connects oral language to print using the students' own words."],
+[2,"Content-based instruction","Language is taught <b>through</b> meaningful subject-matter content (science, social studies) rather than in isolation — students acquire language while learning something real."],
+[2,"Communicative language teaching","Prioritizes <b>meaningful interaction and authentic communication</b> over drills and memorization: role plays, interviews, information-gap tasks where students must talk to succeed."],
+[2,"Comprehensible input strategies","Slower (not louder) speech, gestures, visuals and realia, shorter sentences, repetition and rephrasing, cognates, chunking instructions, and frequent comprehension checks."],
+[2,"Realia","Real, concrete objects used to teach vocabulary and concepts — actual fruit for a nutrition lesson, real menus for a restaurant unit. Makes abstract language concrete, especially for beginners."],
+[2,"Language objective","States what students will <b>do with language</b> in a lesson, tied to listening/speaking/reading/writing: \"Students will orally describe the water cycle using sequence words.\" Posted alongside the content objective."],
+[2,"Formative vs. summative assessment","<b>Formative</b>: ongoing checks (observations, exit tickets, retells) used to <b>adjust instruction</b>. <b>Summative</b>: end-of-unit evaluation of learning. The exam favors formative answers for guiding instruction."],
+[2,"Authentic assessment","Evaluating language through <b>real-world tasks</b>: portfolios, oral retellings, projects, anecdotal observations. Especially fair for ELs because it shows what they can do beyond a multiple-choice format."],
+[2,"Wait time","Pausing <b>3–5+ seconds</b> after asking a question. ELs are often processing in two languages — extended wait time dramatically increases participation and answer quality."],
+[2,"Linguistic accommodations","Supports matched to proficiency level: extra time, bilingual glossaries/dictionaries, clarified or simplified directions, visuals, and oral support — decided for state testing by the LPAC."],
+[2,"Structured interaction","Think-pair-share, partner reading, and cooperative groups give ELs <b>low-risk speaking practice</b>. Heterogeneous grouping with supportive peers maximizes comprehensible output."],
+[2,"Error correction for beginners","Prefer <b>recasting</b> — repeating the student's idea in correct form (\"Yes, she <i>went</i> to the store!\") — over overt correction. Keep the focus on communication to protect the affective filter."],
+[2,"Environmental print supports","Word walls, labeled classroom objects, and anchor charts give ELs constant visual access to key vocabulary and structures they can lean on while speaking and writing."],
+// ---- Domain III ----
+[3,"Lau v. Nichols (1974)","Supreme Court: giving ELs the <b>same</b> materials and instruction as everyone else does <b>not</b> provide equal educational opportunity. Schools must take affirmative steps to overcome language barriers. Grounded in Title VI of the Civil Rights Act."],
+[3,"Castañeda v. Pickard (1981)","Established the <b>three-prong test</b> for EL programs: (1) based on <b>sound educational theory</b>, (2) implemented with adequate <b>resources and staff</b>, and (3) <b>evaluated</b> and shown to produce results."],
+[3,"Plyler v. Doe (1982)","Supreme Court: states cannot deny <b>free public education</b> to children based on immigration status. Undocumented children have the right to attend public school."],
+[3,"Title VI, Civil Rights Act (1964)","Prohibits discrimination based on race, color, or <b>national origin</b> in any program receiving federal funds — the legal foundation for EL rights, including Lau v. Nichols."],
+[3,"Bilingual Education Act (1968)","Title VII of ESEA — the first federal law providing <b>funding for bilingual education</b> programs, recognizing the needs of students with limited English proficiency."],
+[3,"ESSA / Title III","Current federal law: provides funds for English learners and holds states accountable for ELs' <b>progress toward English proficiency</b> and academic achievement."],
+[3,"TEC Chapter 89 (Texas)","Texas law: a district must offer <b>bilingual education</b> at the elementary level when it has <b>20 or more ELs of the same language classification in the same grade level</b> district-wide. Otherwise, ESL programs are required for all identified ELs."],
+[3,"LPAC","<b>Language Proficiency Assessment Committee</b>: identifies and places ELs within the first <b>four weeks</b> of enrollment (with parental approval), reviews progress annually, decides linguistic accommodations for state testing, determines reclassification/exit, and monitors exited students."],
+[3,"Home Language Survey","Completed at enrollment. If any language <b>other than English</b> is listed as used at home or by the student, the student must be assessed for English proficiency to determine EL status."],
+[3,"Program models","<b>Dual language</b> (one-way/two-way: bilingualism + biliteracy for all), <b>transitional bilingual</b> (early/late exit: L1 support fading to English), <b>content-based ESL</b> (self-contained), and <b>ESL pull-out</b>."],
+[3,"Culture shock stages","<b>Honeymoon → Hostility/frustration → Adjustment → Adaptation.</b> A newcomer's withdrawal or anger after initial excitement is often culture shock — respond with routines, empathy, and peer connection, not discipline."],
+[3,"Acculturation vs. assimilation","<b>Acculturation</b>: adapting to a new culture while keeping the home culture (additive). <b>Assimilation</b>: replacing the home culture (subtractive). Schools should support additive acculturation."],
+[3,"Additive vs. subtractive bilingualism","<b>Additive</b>: L2 is added while L1 keeps developing — linked to stronger academic outcomes. <b>Subtractive</b>: L2 replaces L1. Valuing the home language is both good pedagogy and a recurring correct answer."],
+[3,"Funds of knowledge (Moll)","The skills, knowledge, and experiences students' <b>families and communities</b> already possess. Effective teachers learn about and build instruction on these resources — e.g., inviting a parent to share expertise."],
+[3,"Family engagement for ELs","Communicate in the <b>home language</b> (interpreters, translated documents), offer flexible meeting times, and treat families as partners. Parents must receive program information and give approval in a language they understand."]
+];
+
+const QUIZ = [
+// ---- Domain I ----
+[1,"A newcomer from Vietnam has been in class for three weeks. She follows directions, points, and nods, but rarely speaks. What is the teacher's best response?",
+["Refer her for a speech-language evaluation","Recognize she is in the silent period and provide comprehension-rich activities that don't force speech","Require her to answer at least one question aloud each day to build confidence","Move her to a lower grade level until she begins speaking"],1,
+"Understanding without much production is the <b>preproduction (silent) period</b> — a normal stage of second language acquisition. Forcing output raises the affective filter; the teacher should allow gestures, yes/no responses, and TPR-style activities."],
+[1,"A native Spanish speaker writes, \"I have hunger.\" This error is best described as:",
+["Fossilization","A semantic error unrelated to the first language","Negative transfer (L1 interference)","Evidence of a language disorder"],2,
+"Spanish expresses hunger with <i>tener hambre</i> (\"to have hunger\"), so the student is applying an L1 structure to English — classic <b>negative transfer</b>. It's developmental, not a disorder."],
+[1,"A student says, \"She goed to the store yesterday.\" This shows the student is:",
+["Confusing her two languages","Overgeneralizing the regular past-tense rule — a normal developmental pattern","Fossilizing an error that can no longer be corrected","Unable to distinguish phonemes"],1,
+"Applying -ed to an irregular verb is <b>overgeneralization</b>: the student has internalized the past-tense rule and is applying it too broadly. It shows rule learning in progress. Recasting (\"Yes, she <i>went</i>...\") is the ideal response."],
+[1,"A fourth grader chats fluently with friends in English but struggles to understand his science textbook. The best explanation is:",
+["He is not motivated to succeed academically","His conversational fluency (BICS) has developed, but his academic language (CALP) is still developing","He has a reading disability","He was exited from the ESL program too early and should be retested for placement"],1,
+"Cummins' distinction: <b>BICS</b> develops in roughly 1–3 years, while <b>CALP</b> — the abstract, context-reduced language of textbooks — takes 5–7. He needs continued academic language support, not lowered expectations."],
+[1,"A teacher chooses a text slightly above her ELs' current level and supports it with pictures, gestures, and demonstrations. This best reflects:",
+["Krashen's comprehensible input hypothesis (i+1)","The natural order hypothesis","Behaviorist drill-and-practice theory","The monitor hypothesis"],0,
+"Input at <b>i+1</b> — a step beyond current proficiency, made understandable through context — is exactly Krashen's comprehensible input hypothesis, the driver of acquisition."],
+[1,"In the word \"unhelpful,\" how many morphemes are there?",
+["One","Two","Three","Four"],2,
+"<i>un- + help + -ful</i> = <b>three morphemes</b>, each the smallest unit of meaning. Morphology questions like this appear regularly in Domain I."],
+[1,"A teacher greets students warmly, avoids overtly correcting beginners' spoken errors, and celebrates attempts to communicate. According to Krashen, she is primarily:",
+["Raising expectations through rigorous feedback","Lowering the affective filter so input can be acquired","Activating the monitor","Teaching grammar inductively"],1,
+"Anxiety and low confidence raise the <b>affective filter</b>, blocking acquisition. A low-stress environment that rewards communication lowers it."],
+// ---- Domain II ----
+[2,"Which set correctly lists the TELPAS proficiency ratings?",
+["Novice, Developing, Proficient, Distinguished","Beginning, Intermediate, Advanced, Advanced High","Entering, Emerging, Bridging, Reaching","Level 1, Level 2, Level 3, Level 4"],1,
+"TELPAS rates ELs in listening, speaking, reading, and writing as <b>Beginning, Intermediate, Advanced, or Advanced High</b>. Know these cold — they anchor many Domain II questions."],
+[2,"Who is responsible for implementing the ELPS?",
+["Only certified ESL teachers","Only teachers of ELs at the Beginning level","All content-area teachers of English learners, in every subject","Reading and language arts teachers only"],2,
+"The ELPS are part of the required Texas curriculum for <b>every subject and grade</b>. Every content teacher of ELs must integrate language development with content instruction."],
+[2,"Which is the best example of a language objective for a science lesson on the water cycle?",
+["Students will understand the water cycle","Students will label a diagram of the water cycle","Students will orally describe the stages of the water cycle using sequence words (first, next, then)","Students will pass a quiz on the water cycle with 80% accuracy"],2,
+"A language objective specifies what students do with <b>language</b> (listening, speaking, reading, writing) — here, oral production with specific linguistic tools. The others are content or assessment objectives."],
+[2,"A teacher gives commands like \"Stand up,\" \"Touch your desk,\" and \"Point to the window,\" and students respond with movement. This method is most appropriate for:",
+["Advanced High students refining academic writing","Newcomers in the preproduction stage","Students preparing for TELPAS writing","Heritage speakers developing biliteracy"],1,
+"This is <b>Total Physical Response (TPR)</b> — ideal for beginners and the silent period because it builds comprehension and lowers anxiety without requiring speech."],
+[2,"Which is the best example of formative assessment for ELs?",
+["A state-mandated end-of-year exam","A unit test worth 30% of the grade","Observing partner discussions with a checklist and adjusting the next day's lesson","A district benchmark administered each semester"],2,
+"<b>Formative</b> assessment is ongoing and used to <b>adjust instruction</b>. Observation with a checklist that informs tomorrow's teaching is the textbook example; the others are summative."],
+[2,"An intermediate-level EL group struggles during whole-class science discussions. Which adjustment would most increase their language development?",
+["Allow them to listen silently until they feel ready","Use think-pair-share with sentence stems before whole-class sharing","Call on them first so they can't rehearse answers from classmates","Excuse them from discussions and assign worksheets instead"],1,
+"Structured interaction (<b>think-pair-share</b>) plus scaffolds (<b>sentence stems</b>) gives low-risk rehearsal and maximizes comprehensible output. Silence and worksheets remove practice; cold-calling raises the affective filter."],
+[2,"A sheltered instruction lesson is best characterized by:",
+["Simplified, below-grade-level content delivered slowly","Grade-level content made comprehensible through visuals, modeling, and both content and language objectives","Instruction delivered primarily in the students' first language","Grammar drills followed by translation exercises"],1,
+"Sheltered instruction (e.g., SIOP) keeps content at <b>grade level</b> while making it accessible — building background, visuals, adapted (not dumbed-down) texts, and paired content/language objectives."],
+// ---- Domain III ----
+[3,"Lau v. Nichols (1974) established that:",
+["Undocumented children may not be denied public education","Providing ELs identical instruction and materials as English speakers does not constitute equal educational opportunity","Districts must offer dual language programs at every elementary campus","Parents may opt students out of all language programs"],1,
+"In <b>Lau</b>, the Supreme Court held that \"same\" is not \"equal\": schools must take affirmative steps so ELs can meaningfully access instruction. (Plyler v. Doe covers answer A.)"],
+[3,"Under Castañeda v. Pickard, an EL program must meet three requirements. Which set is correct?",
+["Bilingual staff, translated materials, parent volunteers","Sound educational theory, adequate resources and implementation, evaluation showing results","Federal funding, state approval, annual parent surveys","Certified teachers, standardized testing, tutoring services"],1,
+"The <b>Castañeda three-prong test</b>: (1) grounded in sound theory, (2) implemented effectively with adequate resources and personnel, and (3) evaluated and shown to overcome language barriers."],
+[3,"A Texas elementary district has 24 second graders classified as Vietnamese-speaking English learners. Under TEC Chapter 89, the district must:",
+["Offer an ESL pull-out program only","Offer a bilingual education program, since 20 or more ELs share a language classification in the same elementary grade","Hire a Vietnamese-speaking aide for each classroom","Transfer the students to a magnet campus"],1,
+"Texas requires <b>bilingual education</b> at the elementary level when a district has <b>20+ ELs of the same language classification in the same grade level</b>. Below that threshold, ESL programs are required."],
+[3,"A parent's Home Language Survey indicates that Urdu is spoken at home. The next required step is:",
+["Immediately placing the student in a bilingual program","Assessing the student's English proficiency to determine whether they qualify as an English learner","Asking the student which language they prefer for instruction","No action, if the student sounds fluent in conversation"],1,
+"A home language other than English triggers <b>English proficiency assessment</b>; the LPAC then uses results to identify, place (with parental approval), and recommend services — all within the first four weeks of enrollment."],
+[3,"Which is a responsibility of the LPAC?",
+["Assigning ELs' letter grades in content classes","Determining linguistic accommodations for state assessments and reviewing each EL's progress annually","Hiring bilingual paraprofessionals","Writing the district's ESL curriculum"],1,
+"The <b>LPAC</b> identifies and places ELs, secures parent approval, reviews progress annually, decides testing accommodations, determines exit/reclassification, and monitors exited students."],
+[3,"After an enthusiastic first month, a newcomer becomes withdrawn, irritable, and resistant to school routines. The teacher should first consider that the student:",
+["Has a behavioral disorder requiring referral","Is experiencing the hostility stage of culture shock and needs predictable routines, empathy, and peer connection","Is being defiant and needs firm consequences","Was misplaced and should be moved to a beginning-level class"],1,
+"Excitement followed by frustration and withdrawal is the classic <b>honeymoon → hostility</b> progression of culture shock. Supportive structure and connection — not discipline or referral — is the right first response."],
+[3,"A teacher invites a student's grandmother, a skilled weaver, to demonstrate her craft during a unit on economics and trade. This best illustrates:",
+["Assimilation","A subtractive approach to culture","Drawing on students' funds of knowledge to connect home and school learning","Compliance with Title III reporting requirements"],2,
+"<b>Funds of knowledge</b> (Moll): treating families' skills and experiences as academic resources. It validates home culture (additive) and strengthens family engagement — a favorite correct answer in Domain III."]
+];
+
+/* =================== TABS =================== */
+const tabs=document.querySelectorAll('.tab');
+tabs.forEach(t=>t.addEventListener('click',()=>{
+  tabs.forEach(x=>x.classList.remove('active'));
+  t.classList.add('active');
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById(t.dataset.panel).classList.add('active');
+}));
+
+/* =================== FLASHCARDS =================== */
+let deck=[...CARDS.keys()], pos=0, filter='all';
+const reviewSet=new Set();
+const fcCard=document.getElementById('fcCard');
+
+function buildDeck(){
+  if(filter==='all') deck=[...CARDS.keys()];
+  else if(filter==='review') deck=[...reviewSet];
+  else deck=CARDS.map((c,i)=>c[0]==+filter?i:-1).filter(i=>i>=0);
+  pos=0; renderCard();
+}
+function renderCard(){
+  const total=deck.length;
+  document.getElementById('fcTotal').textContent=total;
+  document.getElementById('revCount').textContent=reviewSet.size;
+  if(!total){
+    document.getElementById('fcFront').textContent = filter==='review' ? "Nothing marked for review — nice work." : "No cards here.";
+    document.getElementById('fcBack').textContent="";
+    document.getElementById('fcTagF').textContent=""; document.getElementById('fcTagB').textContent="";
+    document.getElementById('fcPos').textContent=0;
+    fcCard.classList.remove('flipped');
+    return;
+  }
+  const c=CARDS[deck[pos]];
+  fcCard.classList.remove('flipped');
+  document.getElementById('fcTagF').textContent=D[c[0]];
+  document.getElementById('fcTagB').textContent=D[c[0]];
+  document.getElementById('fcFront').textContent=c[1];
+  document.getElementById('fcBack').innerHTML=c[2];
+  document.getElementById('fcPos').textContent=pos+1;
+}
+fcCard.addEventListener('click',()=>{ if(deck.length) fcCard.classList.toggle('flipped'); });
+document.getElementById('nextBtn').onclick=()=>{ if(deck.length){pos=(pos+1)%deck.length; renderCard();} };
+document.getElementById('prevBtn').onclick=()=>{ if(deck.length){pos=(pos-1+deck.length)%deck.length; renderCard();} };
+document.getElementById('shuffleBtn').onclick=()=>{
+  for(let i=deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]];}
+  pos=0; renderCard();
+};
+document.getElementById('gotBtn').onclick=()=>{
+  if(!deck.length) return;
+  reviewSet.delete(deck[pos]);
+  if(filter==='review'){ buildDeck(); } else { pos=(pos+1)%deck.length; renderCard(); }
+};
+document.getElementById('missBtn').onclick=()=>{
+  if(!deck.length) return;
+  reviewSet.add(deck[pos]);
+  pos=(pos+1)%deck.length; renderCard();
+};
+document.getElementById('cardChips').addEventListener('click',e=>{
+  const chip=e.target.closest('.chip'); if(!chip) return;
+  document.querySelectorAll('#cardChips .chip').forEach(c=>c.classList.remove('on'));
+  chip.classList.add('on'); filter=chip.dataset.f; buildDeck();
+});
+document.addEventListener('keydown',e=>{
+  if(!document.getElementById('cards').classList.contains('active')) return;
+  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA') return;
+  if(e.code==='Space'){e.preventDefault(); fcCard.click();}
+  if(e.key==='ArrowRight') document.getElementById('nextBtn').click();
+  if(e.key==='ArrowLeft') document.getElementById('prevBtn').click();
+});
+buildDeck();
+
+/* =================== QUIZ =================== */
+const quizBox=document.getElementById('quizBox');
+let qOrder=[], qi=0, score=0, dStats={};
+
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+
+function quizStart(){
+  quizBox.innerHTML=`
+    <h2>Practice quiz</h2>
+    <p class="lede">Scenario-style questions modeled on the real exam. Pick a set — you'll get instant feedback with an explanation after every answer.</p>
+    <div class="start-opts">
+      <button class="choice" data-set="all"><span class="letter">★</span> Full mixed quiz — all ${QUIZ.length} questions</button>
+      <button class="choice" data-set="1"><span class="letter">I</span> Domain I only — Language &amp; Acquisition</button>
+      <button class="choice" data-set="2"><span class="letter">II</span> Domain II only — Instruction &amp; Assessment</button>
+      <button class="choice" data-set="3"><span class="letter">III</span> Domain III only — Foundations &amp; Culture</button>
+    </div>`;
+  quizBox.querySelectorAll('[data-set]').forEach(b=>b.onclick=()=>beginQuiz(b.dataset.set));
+}
+function beginQuiz(set){
+  qOrder=QUIZ.map((q,i)=>set==='all'||q[0]==+set?i:-1).filter(i=>i>=0);
+  for(let i=qOrder.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[qOrder[i],qOrder[j]]=[qOrder[j],qOrder[i]];}
+  qi=0; score=0; dStats={1:[0,0],2:[0,0],3:[0,0]};
+  renderQuestion();
+}
+function renderQuestion(){
+  if(qi>=qOrder.length){ return renderResults(); }
+  const q=QUIZ[qOrder[qi]];
+  const letters=['A','B','C','D'];
+  quizBox.innerHTML=`
+    <div class="progressbar"><div style="width:${(qi/qOrder.length)*100}%"></div></div>
+    <div class="q-count">${esc(D[q[0]])} · Question ${qi+1} of ${qOrder.length}</div>
+    <div class="q-text">${esc(q[1])}</div>
+    <div class="choices">
+      ${q[2].map((c,i)=>`<button class="choice" data-i="${i}"><span class="letter">${letters[i]}</span><span>${esc(c)}</span></button>`).join('')}
+    </div>
+    <div id="qExplain"></div>
+    <div class="q-foot">
+      <span class="score-pill">Score: <b>${score}</b> / ${qi}</span>
+      <span></span>
+    </div>`;
+  quizBox.querySelectorAll('.choice').forEach(btn=>btn.onclick=()=>answer(+btn.dataset.i));
+}
+function answer(pick){
+  const q=QUIZ[qOrder[qi]];
+  const correct=q[3];
+  dStats[q[0]][1]++;
+  if(pick===correct){score++;dStats[q[0]][0]++;}
+  quizBox.querySelectorAll('.choice').forEach((btn,i)=>{
+    btn.disabled=true;
+    if(i===correct) btn.classList.add('correct');
+    else if(i===pick) btn.classList.add('wrong');
+  });
+  document.getElementById('qExplain').innerHTML=`
+    <div class="explain"><b>${pick===correct?'Correct.':'Not quite.'}</b> ${q[4]}</div>`;
+  quizBox.querySelector('.q-foot').innerHTML=`
+    <span class="score-pill">Score: <b>${score}</b> / ${qi+1}</span>
+    <button class="btn btn-solid" id="nextQ">${qi+1>=qOrder.length?'See results →':'Next question →'}</button>`;
+  document.getElementById('nextQ').onclick=()=>{qi++;renderQuestion();};
+  document.getElementById('nextQ').focus();
+}
+function renderResults(){
+  const pct=Math.round((score/qOrder.length)*100);
+  let verdict;
+  if(pct>=85) verdict="Excellent — you're in strong shape. Keep drilling your weakest domain.";
+  else if(pct>=70) verdict="Solid foundation. Review the explanations you missed and hit the flashcards for those domains.";
+  else verdict="Good start — focus flashcard time on the domains below, then retake the quiz.";
+  const rows=[1,2,3].filter(d=>dStats[d][1]>0).map(d=>{
+    const p=Math.round((dStats[d][0]/dStats[d][1])*100);
+    return `<div class="row"><span class="name">${esc(D[d])}</span><div class="bar"><div style="width:${p}%"></div></div><span class="pct">${p}%</span></div>`;
+  }).join('');
+  quizBox.innerHTML=`
+    <div class="result-big">${score} / ${qOrder.length}</div>
+    <p class="result-sub">${pct}% — ${esc(verdict)}</p>
+    <div class="dbreak">${rows}</div>
+    <div class="center">
+      <button class="btn btn-solid" id="retake">Take another quiz</button>
+      <button class="btn btn-ghost" id="toCards" style="color:var(--ink);border-color:#D8D0BA">Drill flashcards</button>
+    </div>`;
+  document.getElementById('retake').onclick=quizStart;
+  document.getElementById('toCards').onclick=()=>document.querySelector('[data-panel="cards"]').click();
+}
+quizStart();
+
+/* =================== PWA =================== */
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+</script>
+</body>
+</html>
