@@ -104,6 +104,51 @@ nav{display:flex;justify-content:center;gap:8px;margin:26px 0 24px;flex-wrap:wra
 .sheet h2{font-family:'Zilla Slab',serif;font-size:1.4rem;margin-bottom:6px}
 .sheet .lede{color:var(--ink-soft);font-size:.95rem;line-height:1.55}
 
+/* ---------- study guide ---------- */
+.sheet + .sheet{margin-top:18px}
+.plan-progress{display:flex;align-items:center;gap:12px;margin:14px 0 4px}
+.plan-progress .bar{flex:1;height:8px;background:#E8E2CE;border-radius:6px;overflow:hidden}
+.plan-progress .bar div{height:100%;background:var(--correct);border-radius:6px;transition:width .3s}
+.plan-progress .lbl{font-size:.82rem;font-weight:600;color:var(--ink-soft);flex:none}
+.day{border:1.5px solid #E4DECB;border-radius:10px;margin-top:14px;overflow:hidden;background:#FBF8EE}
+.day.today{border-color:var(--accent)}
+.day summary{
+  list-style:none;cursor:pointer;padding:14px 16px;display:flex;align-items:center;gap:12px;
+  -webkit-user-select:none;user-select:none;
+}
+.day summary::-webkit-details-marker{display:none}
+.day .datebox{
+  flex:none;width:52px;text-align:center;background:var(--board);color:var(--chalk);
+  border-radius:8px;padding:6px 0;line-height:1.1;
+}
+.day .datebox .mo{font-size:.58rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#F0C987}
+.day .datebox .dt{font-family:'Zilla Slab',serif;font-weight:700;font-size:1.25rem}
+.day .dtitle{flex:1}
+.day .dtitle .t{font-family:'Zilla Slab',serif;font-weight:600;font-size:1.02rem}
+.day .dtitle .s{font-size:.78rem;color:var(--ink-soft);margin-top:2px}
+.day .arrow{flex:none;color:var(--ink-soft);transition:transform .2s;font-size:.8rem}
+.day[open] .arrow{transform:rotate(90deg)}
+.day .dbody{padding:2px 16px 16px;border-top:1px dashed #E4DECB}
+.task{display:flex;gap:11px;align-items:flex-start;padding:9px 0;cursor:pointer;font-size:.92rem;line-height:1.5}
+.task input{flex:none;width:20px;height:20px;margin-top:1px;accent-color:var(--correct);cursor:pointer}
+.task input:checked + span{color:var(--ink-soft);text-decoration:line-through;text-decoration-color:#B9B29A}
+.day .why{margin-top:10px;font-size:.83rem;color:var(--ink-soft);background:#F4F0E4;border-radius:8px;padding:10px 13px;line-height:1.55}
+.ref{border:1.5px solid #E4DECB;border-radius:10px;margin-top:12px;overflow:hidden}
+.ref summary{
+  list-style:none;cursor:pointer;padding:14px 16px;font-family:'Zilla Slab',serif;font-weight:600;font-size:1.02rem;
+  display:flex;justify-content:space-between;align-items:center;gap:10px;background:#FBF8EE;
+  -webkit-user-select:none;user-select:none;
+}
+.ref summary::-webkit-details-marker{display:none}
+.ref summary .arrow{color:var(--ink-soft);font-size:.8rem;transition:transform .2s;font-family:'Inter',sans-serif}
+.ref[open] summary .arrow{transform:rotate(90deg)}
+.ref .rbody{padding:4px 18px 18px;border-top:1px dashed #E4DECB;font-size:.92rem;line-height:1.7}
+.ref .rbody h4{font-family:'Zilla Slab',serif;font-size:.98rem;margin:16px 0 6px;color:var(--accent-deep)}
+.ref .rbody p{margin:8px 0}
+.ref .rbody ul{margin:6px 0 10px 20px}
+.ref .rbody li{margin:5px 0}
+.ref .rbody .mem{background:#FDF3DD;border-left:3px solid #F0C987;padding:9px 13px;border-radius:0 8px 8px 0;margin:10px 0;font-size:.88rem}
+
 /* ---------- chips ---------- */
 .chips{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:18px}
 .chip{
@@ -243,6 +288,7 @@ nav{display:flex;justify-content:center;gap:8px;margin:26px 0 24px;flex-wrap:wra
 
 <nav class="wrap" role="tablist">
   <button class="tab active" data-panel="overview" role="tab">Exam overview</button>
+  <button class="tab" data-panel="guide" role="tab">Study plan</button>
   <button class="tab" data-panel="cards" role="tab">Flashcards</button>
   <button class="tab" data-panel="quiz" role="tab">Practice quiz</button>
 </nav>
@@ -280,6 +326,291 @@ nav{display:flex;justify-content:center;gap:8px;margin:26px 0 24px;flex-wrap:wra
 
       <p class="note">Study tip: the exam loves classroom scenarios — most questions describe a student or situation and ask for the <em>best</em> teacher response. When two answers seem right, pick the one that keeps instruction comprehensible, additive (values the home language), and appropriate to the student's proficiency stage. Verify current exam logistics at tx.nesinc.com before test day.</p>
     </div>
+  </section>
+
+
+  <!-- ============ STUDY GUIDE ============ -->
+  <section id="guide" class="panel">
+
+    <div class="sheet">
+      <h2>Your 7-day plan → test day July 16</h2>
+      <p class="lede">About 60–90 minutes a day. Domain II gets the most time because it's ~45% of the exam. Check off tasks as you go — progress saves on this device.</p>
+      <div class="plan-progress"><div class="bar"><div id="planBar" style="width:0%"></div></div><span class="lbl" id="planLbl">0 of 0 done</span></div>
+
+      <details class="day" data-day="0709">
+        <summary><div class="datebox"><div class="mo">Jul</div><div class="dt">9</div></div><div class="dtitle"><div class="t">Day 1 · Baseline &amp; big picture</div><div class="s">Thursday · ~90 min</div></div><span class="arrow">▶</span></summary>
+        <div class="dbody">
+          <label class="task"><input type="checkbox" data-t="d1a"><span>Read the Exam overview tab so you know the three domains and their weights</span></label>
+          <label class="task"><input type="checkbox" data-t="d1b"><span>Take the full mixed quiz cold — don't study first. This is your diagnostic</span></label>
+          <label class="task"><input type="checkbox" data-t="d1c"><span>Note your weakest domain from the results breakdown — it gets extra time this week</span></label>
+          <label class="task"><input type="checkbox" data-t="d1d"><span>Flip through all flashcards once, quickly. Mark anything unfamiliar as "Needs review"</span></label>
+          <div class="why">Why: a cold diagnostic tells you where the real gaps are, so the week targets weaknesses instead of re-studying what you already know.</div>
+        </div>
+      </details>
+
+      <details class="day" data-day="0710">
+        <summary><div class="datebox"><div class="mo">Jul</div><div class="dt">10</div></div><div class="dtitle"><div class="t">Day 2 · Domain I — Linguistics &amp; theory</div><div class="s">Friday · ~75 min</div></div><span class="arrow">▶</span></summary>
+        <div class="dbody">
+          <label class="task"><input type="checkbox" data-t="d2a"><span>Read the "Domain I deep review" section below (linguistics + Krashen + Cummins)</span></label>
+          <label class="task"><input type="checkbox" data-t="d2b"><span>Drill the Domain I flashcards until you can define phonology/morphology/syntax/semantics/pragmatics without peeking</span></label>
+          <label class="task"><input type="checkbox" data-t="d2c"><span>Memorize Krashen's five hypotheses and BICS (1–3 yrs) vs. CALP (5–7 yrs)</span></label>
+          <label class="task"><input type="checkbox" data-t="d2d"><span>Take the Domain I quiz. Reread every explanation, even for correct answers</span></label>
+        </div>
+      </details>
+
+      <details class="day" data-day="0711">
+        <summary><div class="datebox"><div class="mo">Jul</div><div class="dt">11</div></div><div class="dtitle"><div class="t">Day 3 · SLA stages + start Domain II</div><div class="s">Saturday · ~90 min</div></div><span class="arrow">▶</span></summary>
+        <div class="dbody">
+          <label class="task"><input type="checkbox" data-t="d3a"><span>Memorize the five SLA stages in order and one teacher strategy for each (see Domain I deep review)</span></label>
+          <label class="task"><input type="checkbox" data-t="d3b"><span>Redo your "Needs review" flashcard deck from Domain I</span></label>
+          <label class="task"><input type="checkbox" data-t="d3c"><span>Read the first half of "Domain II deep review": ELPS, sheltered instruction, and the methods list</span></label>
+          <label class="task"><input type="checkbox" data-t="d3d"><span>Drill Domain II flashcards (methods cards: TPR, LEA, sheltered instruction, scaffolding, realia)</span></label>
+          <div class="why">Why start Domain II already: it's the biggest slice of the exam (~45%), so it gets three days.</div>
+        </div>
+      </details>
+
+      <details class="day" data-day="0712">
+        <summary><div class="datebox"><div class="mo">Jul</div><div class="dt">12</div></div><div class="dtitle"><div class="t">Day 4 · Domain II — Instruction in depth</div><div class="s">Sunday · ~90 min</div></div><span class="arrow">▶</span></summary>
+        <div class="dbody">
+          <label class="task"><input type="checkbox" data-t="d4a"><span>Finish "Domain II deep review": comprehensible input toolkit, literacy, content-area support</span></label>
+          <label class="task"><input type="checkbox" data-t="d4b"><span>Practice writing two language objectives (verb + language skill + support), e.g. "orally describe … using sequence words"</span></label>
+          <label class="task"><input type="checkbox" data-t="d4c"><span>Take the Domain II quiz</span></label>
+          <label class="task"><input type="checkbox" data-t="d4d"><span>Re-drill any Domain II cards you marked "Needs review"</span></label>
+        </div>
+      </details>
+
+      <details class="day" data-day="0713">
+        <summary><div class="datebox"><div class="mo">Jul</div><div class="dt">13</div></div><div class="dtitle"><div class="t">Day 5 · Assessment/TELPAS + Domain III law</div><div class="s">Monday · ~90 min</div></div><span class="arrow">▶</span></summary>
+        <div class="dbody">
+          <label class="task"><input type="checkbox" data-t="d5a"><span>Memorize the four TELPAS ratings and formative vs. summative vs. authentic assessment</span></label>
+          <label class="task"><input type="checkbox" data-t="d5b"><span>Read "Domain III deep review": the court cases timeline and TEC Chapter 89</span></label>
+          <label class="task"><input type="checkbox" data-t="d5c"><span>Memorize the big three cases — Lau (1974), Castañeda (1981, three prongs), Plyler (1982) — and the 20-student rule</span></label>
+          <label class="task"><input type="checkbox" data-t="d5d"><span>Drill Domain III flashcards (law + LPAC cards)</span></label>
+        </div>
+      </details>
+
+      <details class="day" data-day="0714">
+        <summary><div class="datebox"><div class="mo">Jul</div><div class="dt">14</div></div><div class="dtitle"><div class="t">Day 6 · Culture &amp; family + full practice run</div><div class="s">Tuesday · ~90 min</div></div><span class="arrow">▶</span></summary>
+        <div class="dbody">
+          <label class="task"><input type="checkbox" data-t="d6a"><span>Finish "Domain III deep review": culture shock stages, additive vs. subtractive, funds of knowledge, family engagement</span></label>
+          <label class="task"><input type="checkbox" data-t="d6b"><span>Take the Domain III quiz</span></label>
+          <label class="task"><input type="checkbox" data-t="d6c"><span>Take the full mixed quiz again and compare with Day 1's diagnostic</span></label>
+          <label class="task"><input type="checkbox" data-t="d6d"><span>Whatever domain is still lowest: reread its deep review section tonight</span></label>
+        </div>
+      </details>
+
+      <details class="day" data-day="0715">
+        <summary><div class="datebox"><div class="mo">Jul</div><div class="dt">15</div></div><div class="dtitle"><div class="t">Day 7 · Light review &amp; logistics</div><div class="s">Wednesday · ~45 min, then rest</div></div><span class="arrow">▶</span></summary>
+        <div class="dbody">
+          <label class="task"><input type="checkbox" data-t="d7a"><span>Run only your "Needs review" flashcard deck — nothing new today</span></label>
+          <label class="task"><input type="checkbox" data-t="d7b"><span>Read the "How to pick the best answer" section below one more time</span></label>
+          <label class="task"><input type="checkbox" data-t="d7c"><span>Logistics: confirm appointment time and testing center location, plan the drive, set out a government-issued photo ID</span></label>
+          <label class="task"><input type="checkbox" data-t="d7d"><span>Stop by early evening. Eat well, sleep early — a rested brain beats one more hour of cramming</span></label>
+        </div>
+      </details>
+
+      <details class="day" data-day="0716">
+        <summary><div class="datebox"><div class="mo">Jul</div><div class="dt">16</div></div><div class="dtitle"><div class="t">Test day 🎓</div><div class="s">Thursday</div></div><span class="arrow">▶</span></summary>
+        <div class="dbody">
+          <label class="task"><input type="checkbox" data-t="d8a"><span>Arrive ~30 minutes early with your photo ID; personal items go in a locker</span></label>
+          <label class="task"><input type="checkbox" data-t="d8b"><span>Pace yourself: 80 questions — roughly 3 minutes each still leaves a big buffer. Don't camp on any one question</span></label>
+          <label class="task"><input type="checkbox" data-t="d8c"><span>Flag anything uncertain and come back — a later question often jogs the answer</span></label>
+          <label class="task"><input type="checkbox" data-t="d8d"><span>Answer everything. There's no penalty for guessing</span></label>
+          <div class="why">When stuck between two answers, ask: which option keeps content comprehensible, values the home language, and matches the student's proficiency stage? That one is almost always correct.</div>
+        </div>
+      </details>
+    </div>
+
+    <div class="sheet">
+      <h2>Domain I deep review — Language &amp; Acquisition (~25%)</h2>
+
+      <details class="ref">
+        <summary>The five subsystems of language<span class="arrow">▶</span></summary>
+        <div class="rbody">
+          <ul>
+            <li><b>Phonology</b> — the sound system. <i>Phoneme</i> = smallest sound that changes meaning (/b/at vs. /p/at). ELs struggle most with English sounds missing from their L1 (e.g., short vowels, final consonant clusters).</li>
+            <li><b>Morphology</b> — word formation. <i>Morpheme</i> = smallest unit of meaning: <i>un·help·ful</i> = 3. Free morphemes stand alone (<i>help</i>); bound ones can't (<i>un-, -ful</i>). Teaching roots/affixes multiplies vocabulary.</li>
+            <li><b>Syntax</b> — sentence structure and word order. L1 word order transfers: Spanish adjective-after-noun → "the car red."</li>
+            <li><b>Semantics</b> — meaning: multiple-meaning words, idioms, figurative language. Idioms ("piece of cake") need explicit teaching.</li>
+            <li><b>Pragmatics</b> — language in social context: politeness, turn-taking, register, indirect requests. "Can you pass the salt?" is a request, not a question.</li>
+          </ul>
+          <div class="mem">Memory hook: <b>P</b>lease <b>M</b>ake <b>S</b>tudents <b>S</b>peak <b>P</b>roperly — Phonology, Morphology, Syntax, Semantics, Pragmatics — ordered from sounds up to social use.</div>
+        </div>
+      </details>
+
+      <details class="ref">
+        <summary>Krashen's five hypotheses<span class="arrow">▶</span></summary>
+        <div class="rbody">
+          <ul>
+            <li><b>Acquisition vs. Learning</b> — acquisition is subconscious, from meaningful communication; learning is conscious rule study. Acquisition drives fluency.</li>
+            <li><b>Comprehensible Input (i+1)</b> — we acquire when input is one step beyond current level and made understandable (visuals, gestures, context). The most-tested hypothesis.</li>
+            <li><b>Affective Filter</b> — anxiety, low confidence, and low motivation block input. Low-stress classrooms lower the filter. Scenario tell: a teacher creating a welcoming, mistake-friendly environment.</li>
+            <li><b>Monitor</b> — learned rules only edit output when there's time and focus on form (editing an essay, not conversation).</li>
+            <li><b>Natural Order</b> — grammar structures arrive in a predictable sequence no matter the teaching order, so developmental errors are expected.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="ref">
+        <summary>Cummins: BICS vs. CALP + the iceberg<span class="arrow">▶</span></summary>
+        <div class="rbody">
+          <p><b>BICS</b> (Basic Interpersonal Communication Skills): conversational, context-embedded, ~<b>1–3 years</b>. <b>CALP</b> (Cognitive Academic Language Proficiency): abstract, context-reduced academic language, ~<b>5–7 years</b>.</p>
+          <p>The classic scenario: a student who chats fluently but struggles with textbooks has BICS without full CALP — the answer is academic language support, never "he's unmotivated" or "retest his placement."</p>
+          <p>Cummins' <b>Common Underlying Proficiency</b>: skills learned in L1 (like reading comprehension) transfer to L2 — a key argument for bilingual education and for valuing the home language.</p>
+        </div>
+      </details>
+
+      <details class="ref">
+        <summary>The five SLA stages + what the teacher does<span class="arrow">▶</span></summary>
+        <div class="rbody">
+          <ul>
+            <li><b>1. Preproduction</b> (silent period, 0–6 mo): understands more than produces. → TPR, visuals, yes/no and pointing responses. Never force speech.</li>
+            <li><b>2. Early production</b> (6–12 mo): one/two-word answers. → Either/or questions, labeling, word banks.</li>
+            <li><b>3. Speech emergence</b> (1–3 yrs): short sentences, frequent errors. → Sentence stems, dialogues, recasting instead of overt correction.</li>
+            <li><b>4. Intermediate fluency</b> (3–5 yrs): longer, more complex speech; academic gaps remain. → Academic vocabulary, graphic organizers, structured writing.</li>
+            <li><b>5. Advanced fluency</b> (5–7+ yrs): near-native. → Continued academic refinement, idioms, register.</li>
+          </ul>
+          <div class="mem">Exam pattern: match the activity to the stage. TPR for a newcomer = correct; demanding oral presentations from a preproduction student = wrong.</div>
+        </div>
+      </details>
+
+      <details class="ref">
+        <summary>Learner language: transfer, interlanguage &amp; friends<span class="arrow">▶</span></summary>
+        <div class="rbody">
+          <ul>
+            <li><b>Positive transfer</b>: L1 helps (cognates: <i>familia/family</i>). <b>Negative transfer/interference</b>: L1 hurts ("I have hunger").</li>
+            <li><b>Interlanguage</b>: the learner's evolving in-between system — errors are data about where they are.</li>
+            <li><b>Overgeneralization</b>: rule applied too broadly ("goed," "foots") — a healthy developmental sign.</li>
+            <li><b>Fossilization</b>: errors that become permanent without feedback.</li>
+            <li><b>Code-switching</b>: alternating languages mid-conversation — a bilingual skill, never a deficit. Any answer treating it as confusion is wrong.</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+
+    <div class="sheet">
+      <h2>Domain II deep review — Instruction &amp; Assessment (~45%)</h2>
+
+      <details class="ref">
+        <summary>ELPS — who, what, where<span class="arrow">▶</span></summary>
+        <div class="rbody">
+          <p>The <b>English Language Proficiency Standards</b> are part of the required Texas curriculum for ELs in <b>every subject and every grade</b>. Responsibility belongs to <b>all content-area teachers</b>, not just the ESL teacher — a favorite exam question.</p>
+          <p>Teachers must post/deliver both a <b>content objective</b> and a <b>language objective</b> (listening, speaking, reading, or writing), and provide <b>linguistically accommodated instruction</b> matched to each student's proficiency level.</p>
+        </div>
+      </details>
+
+      <details class="ref">
+        <summary>Methods you must recognize on sight<span class="arrow">▶</span></summary>
+        <div class="rbody">
+          <ul>
+            <li><b>Sheltered instruction / SIOP</b>: grade-level content made comprehensible — building background, visuals, adapted (not dumbed-down) text, content + language objectives. The default right answer for "teaching content to ELs."</li>
+            <li><b>TPR</b>: commands + physical response. Beginners/silent period.</li>
+            <li><b>Language Experience Approach</b>: students dictate a shared experience; teacher writes it; the text becomes reading material. Connects oral language to print.</li>
+            <li><b>Communicative Language Teaching</b>: authentic interaction (role plays, information gaps) over drills.</li>
+            <li><b>Content-based instruction</b>: language taught through real subject matter.</li>
+            <li><b>Natural approach</b>: comprehension first, low anxiety, speech emerges when ready (Krashen &amp; Terrell in practice).</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="ref">
+        <summary>The comprehensible-input toolkit<span class="arrow">▶</span></summary>
+        <div class="rbody">
+          <p>Slower (never louder) speech · gestures and facial expression · visuals, realia, demonstrations · shorter sentences · repetition and rephrasing · cognates · chunked instructions · frequent comprehension checks · word walls and anchor charts · <b>wait time of 3–5+ seconds</b> · structured talk (think-pair-share) with <b>sentence stems</b>.</p>
+          <div class="mem">Scenario heuristic: the correct strategy adds support without lowering the cognitive level. Wrong answers simplify the content, remove interaction, or isolate the student.</div>
+        </div>
+      </details>
+
+      <details class="ref">
+        <summary>Literacy &amp; the four language domains<span class="arrow">▶</span></summary>
+        <div class="rbody">
+          <p>Oral language is the foundation for EL literacy — build listening/speaking alongside reading/writing, never sequentially "speech first, print years later." L1 literacy transfers: a student who reads in Spanish doesn't relearn <i>how to read</i>, only the new code.</p>
+          <ul>
+            <li>Pre-reading: build background knowledge and pre-teach key vocabulary.</li>
+            <li>During: shared/echo reading, picture walks, graphic organizers.</li>
+            <li>Writing: model → shared writing → guided → independent, with stems and word banks as scaffolds that fade.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="ref">
+        <summary>Assessment: formative, summative, authentic + TELPAS<span class="arrow">▶</span></summary>
+        <div class="rbody">
+          <ul>
+            <li><b>Formative</b>: ongoing, low-stakes, used to <b>adjust instruction</b> (observation checklists, exit tickets, retells). If a question asks how to guide teaching, the formative option wins.</li>
+            <li><b>Summative</b>: end-of-unit/year evaluation (unit tests, state exams).</li>
+            <li><b>Authentic/performance</b>: real-world tasks — portfolios, oral retellings, projects. Fairest picture of what ELs can actually do.</li>
+            <li><b>TELPAS</b>: annual, K–12, four domains (listening, speaking, reading, writing). Ratings: <b>Beginning → Intermediate → Advanced → Advanced High</b>. Results inform instruction, accommodations, and reclassification.</li>
+            <li><b>Linguistic accommodations</b> (LPAC-determined for state tests): extra time, bilingual dictionary/glossary, clarified directions, oral support where allowed.</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+
+    <div class="sheet">
+      <h2>Domain III deep review — Foundations, Culture &amp; Family (~30%)</h2>
+
+      <details class="ref">
+        <summary>Law timeline (memorize cold)<span class="arrow">▶</span></summary>
+        <div class="rbody">
+          <ul>
+            <li><b>1964 — Title VI, Civil Rights Act</b>: no national-origin discrimination in federally funded programs. The legal root of everything below.</li>
+            <li><b>1968 — Bilingual Education Act</b> (ESEA Title VII): first federal funding for bilingual programs.</li>
+            <li><b>1974 — Lau v. Nichols</b>: identical instruction ≠ equal opportunity; schools must take affirmative steps for ELs.</li>
+            <li><b>1981 — Castañeda v. Pickard</b>: three-prong program test — (1) sound educational theory, (2) adequate resources/implementation, (3) evaluation showing results.</li>
+            <li><b>1982 — Plyler v. Doe</b>: free public education cannot be denied based on immigration status.</li>
+            <li><b>ESSA / Title III</b> (current): federal funds + accountability for ELs' English proficiency progress.</li>
+          </ul>
+          <div class="mem">Keep Lau and Plyler straight: <b>Lau = language access</b>, <b>Plyler = immigration status</b>. Castañeda = the <b>3-prong test</b> (theory, implementation, results).</div>
+        </div>
+      </details>
+
+      <details class="ref">
+        <summary>Texas specifics: TEC Chapter 89 &amp; the LPAC<span class="arrow">▶</span></summary>
+        <div class="rbody">
+          <p><b>The 20-student rule</b>: a district must offer <b>bilingual education</b> at the elementary level when it has <b>20+ ELs of the same language classification in the same grade level</b> district-wide. Below that (or beyond elementary), <b>ESL programs</b> are required for every identified EL.</p>
+          <p><b>LPAC lifecycle</b>: Home Language Survey at enrollment → any non-English answer triggers an <b>English proficiency assessment</b> → LPAC identifies and places the student <b>within the first four weeks</b>, with <b>parental approval</b> → reviews progress annually → sets state-testing accommodations → decides reclassification/exit → monitors exited students.</p>
+          <p><b>Program models</b>: dual language (one-way/two-way — bilingualism + biliteracy goals), transitional bilingual (early/late exit — L1 support fading), content-based ESL, ESL pull-out.</p>
+        </div>
+      </details>
+
+      <details class="ref">
+        <summary>Culture: shock, acculturation &amp; funds of knowledge<span class="arrow">▶</span></summary>
+        <div class="rbody">
+          <ul>
+            <li><b>Culture shock stages</b>: honeymoon → hostility/frustration → adjustment → adaptation. A newcomer who turns withdrawn or irritable after an enthusiastic start is in the hostility stage — respond with routines, empathy, and peer connection, not discipline or referral.</li>
+            <li><b>Acculturation</b> (adapt while keeping home culture, additive) vs. <b>assimilation</b> (replace it, subtractive). Schools should support acculturation.</li>
+            <li><b>Additive bilingualism</b> — L2 added while L1 grows — predicts stronger outcomes. Any answer that devalues the home language is wrong.</li>
+            <li><b>Funds of knowledge</b> (Moll): families' skills and experiences are academic resources — invite them into instruction.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="ref">
+        <summary>Family &amp; community engagement<span class="arrow">▶</span></summary>
+        <div class="rbody">
+          <p>Communicate in the <b>home language</b>: interpreters, translated documents, and program information parents can actually understand — parental approval for placement requires it. Offer flexible meeting times, home-school connections, and community partnerships. Treat families as partners with expertise, not as an audience to fix.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="sheet">
+      <h2>How to pick the "best" answer</h2>
+      <p class="lede">Most questions describe a classroom scenario and ask for the best teacher response. When two options look right, run this filter:</p>
+      <details class="ref" open>
+        <summary>The four-question filter<span class="arrow">▶</span></summary>
+        <div class="rbody">
+          <ul>
+            <li><b>Is it comprehensible?</b> Right answers add visuals, modeling, and context. Wrong ones just repeat, speak louder, or lecture.</li>
+            <li><b>Is it additive?</b> Right answers value and use the home language and culture. Anything punishing L1 use or pushing assimilation is wrong.</li>
+            <li><b>Is it stage-appropriate?</b> Match the demand to the proficiency level. Forcing speech from a silent-period student is always wrong.</li>
+            <li><b>Does it keep expectations high?</b> Right answers scaffold grade-level content. Watering down content, excusing students from activities, or isolating them with worksheets is wrong.</li>
+          </ul>
+          <div class="mem">Also beware of "always/never/only" in answer choices, and remember: developmental errors (goed, foots) call for modeling and recasting — not referral, penalty, or alarm.</div>
+        </div>
+      </details>
+    </div>
+
   </section>
 
   <!-- ============ FLASHCARDS ============ -->
@@ -625,6 +956,28 @@ function renderResults(){
   document.getElementById('toCards').onclick=()=>document.querySelector('[data-panel="cards"]').click();
 }
 quizStart();
+
+/* =================== STUDY PLAN =================== */
+const store = (()=>{ try{ localStorage.setItem('_t','1'); localStorage.removeItem('_t'); return localStorage; }catch(e){ const m={}; return {getItem:k=>m[k]??null, setItem:(k,v)=>m[k]=String(v), removeItem:k=>delete m[k]}; } })();
+const planBoxes=document.querySelectorAll('#guide .task input');
+function planRefresh(){
+  const done=[...planBoxes].filter(b=>b.checked).length;
+  document.getElementById('planBar').style.width=(done/planBoxes.length*100)+'%';
+  document.getElementById('planLbl').textContent=`${done} of ${planBoxes.length} done`;
+}
+planBoxes.forEach(b=>{
+  if(store.getItem('esl154:'+b.dataset.t)==='1') b.checked=true;
+  b.addEventListener('change',()=>{ store.setItem('esl154:'+b.dataset.t, b.checked?'1':'0'); planRefresh(); });
+});
+planRefresh();
+// open + highlight today's card
+(()=>{
+  const now=new Date();
+  const key=String(now.getMonth()+1).padStart(2,'0')+String(now.getDate()).padStart(2,'0');
+  const el=document.querySelector(`#guide .day[data-day="${key}"]`);
+  if(el){ el.setAttribute('open',''); el.classList.add('today'); }
+  else { const first=document.querySelector('#guide .day'); if(first) first.setAttribute('open',''); }
+})();
 
 /* =================== PWA =================== */
 if ('serviceWorker' in navigator) {
